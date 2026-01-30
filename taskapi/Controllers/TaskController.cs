@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TaskController : ControllerBase
 {
     private readonly TaskContext _context;
@@ -11,7 +12,7 @@ public class TaskController : ControllerBase
         _context = context;
     }
 
-    [HttpPost]
+    [HttpPost("createtask")]
     public async Task<ActionResult<TaskItem>> CreateTask([FromBody] CreateTaskDto dto)
     {
         var item = new TodoApi.Models.TaskItem
@@ -26,12 +27,19 @@ public class TaskController : ControllerBase
         return CreatedAtAction(nameof(GetTaskbyId), new { id = item.Id }, item);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("gettaskbyid/{id}")]
     public async Task<ActionResult<TaskItem>> GetTaskbyId(int id)
     {
         var item = await _context.TodoItems.FindAsync(id);
         if (item == null)
             return NotFound();
         return item;
+    }
+
+    [HttpGet("getalltasks")]
+    public async Task<ActionResult<IEnumerable<TaskItem>>> GetAllTasks()
+    {
+        var items = await _context.TodoItems.ToListAsync();
+        return Ok(items);
     }
 }
