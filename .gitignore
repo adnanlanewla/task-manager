@@ -1,0 +1,32 @@
+# .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.dbmdl
+*.pdb
+*.cache
+*.log
+TestResults/
+*.localhistory/
+*.DS_Store
+
+# Vue.js / Node.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+
+# OS-specific
+Thumbs.db
+.DS_Store
+
+# Others
+*.swp
+*.bak
+*.tmp
