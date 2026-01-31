@@ -28,16 +28,16 @@ This project is a simple, pragmatic to-do task management solution with a .NET 8
     - cd task-manager/taskapi.tests
     - dotnet test
    
-  ### Frontend (Vue.js)
-  - cd task-manager/client/task-client
-  - npm install
-  - npm run dev
-  
-    ## Testing
-    - Unit tests use Vitest and Vue Test Utils.
-    - To run tests:
-      - cd task-manager/client/task-client
-      - npm run test
+### Frontend (Vue.js)
+- cd task-manager/client/task-client
+- npm install
+- npm run dev
+
+  ## Testing
+  - Unit tests use Vitest and Vue Test Utils.
+  - To run tests:
+    - cd task-manager/client/task-client
+    - npm run test
 
 
 ## Assumptions & Trade-offs
