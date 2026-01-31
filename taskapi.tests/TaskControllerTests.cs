@@ -33,6 +33,7 @@ public class TaskControllerTests
     {
         var context = GetSqliteDbContext();
         var controller = new TaskController(context);
+        var dueDate = new DateTime(2026, 1, 31);
         var dto = new CreateTaskDto { Title = "Test Task", IsCompleted = false };
 
         var result = await controller.CreateTask(dto);
@@ -42,6 +43,22 @@ public class TaskControllerTests
         var task = Assert.IsType<TaskItem>(createdResult.Value);
         Assert.Equal("Test Task", task.Title);
         Assert.False(task.IsCompleted);
+        Assert.Equal(dueDate, task.DueDate);
+    }
+
+    // Tests that creating a task without a due date defaults to today's date.
+    [Fact]
+    public async Task CreateTask_DefaultsDueDateToToday_WhenNotProvided()
+    {
+        var context = GetSqliteDbContext();
+        var controller = new TaskController(context);
+        var dto = new CreateTaskDto { Title = "No Due Date", IsCompleted = false, DueDate = null };
+
+        var result = await controller.CreateTask(dto);
+
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+        var task = Assert.IsType<TaskItem>(createdResult.Value);
+        Assert.Equal(DateTime.Today, task.DueDate);
     }
 
     // Tests that requesting a non-existent task by ID returns NotFound.

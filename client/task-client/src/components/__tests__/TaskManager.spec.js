@@ -6,9 +6,9 @@ import TaskManager from '../TaskManager.vue';
 vi.mock('axios', () => ({
   default: {
     get: vi.fn(() => Promise.resolve({ data: [
-      { id: 1, title: 'Test Task', isCompleted: false }
+      { id: 1, title: 'Test Task', isCompleted: false, dueDate: '2026-01-31' }
     ] })),
-    post: vi.fn(() => Promise.resolve({ data: { id: 2, title: 'New Task', isCompleted: false } })),
+    post: vi.fn(() => Promise.resolve({ data: { id: 2, title: 'New Task', isCompleted: false, dueDate: '2026-02-01' } })),
     patch: vi.fn(() => Promise.resolve()),
     delete: vi.fn(() => Promise.resolve()),
   }
@@ -23,9 +23,16 @@ describe('TaskManager.vue', () => {
 
   it('renders tasks from API', async () => {
     const wrapper = mount(TaskManager);
-    // Wait for fetchTasks to resolve
     await new Promise(resolve => setTimeout(resolve));
     expect(wrapper.text()).toContain('Test Task');
+    expect(wrapper.text()).toContain('2026'); // due date is shown
+  });
+
+  it('shows due date input and label', () => {
+    const wrapper = mount(TaskManager);
+    const dateInput = wrapper.find('input[type="date"]');
+    expect(dateInput.exists()).toBe(true);
+    expect(wrapper.find('label').text().toLowerCase()).toContain('due date');
   });
 
   it('adds a new task', async () => {
