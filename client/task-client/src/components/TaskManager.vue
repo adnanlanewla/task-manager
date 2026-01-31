@@ -2,14 +2,18 @@
   <div class="task-manager">
     <h1>Task Manager</h1>
     <div class="add-task">
-      <input type="text" v-model="newTaskTitle" placeholder="Add a new task..." @keyup.enter="addTask">
-      <button @click="addTask">Add Task</button>
+     <input type="text" v-model="newTaskTitle" placeholder="Add a new task..." @keyup.enter="addTask"
+        :disabled="isTaskFetchFailed">
+            <label class="due-date-label" for="due-date-input">Due Date:</label>
+      <input id="due-date-input" type="date" v-model="newTaskDueDate" :disabled="isTaskFetchFailed" />
+      <button @click="addTask" :disabled="isTaskFetchFailed">Add Task</button>
     </div>
     <ul>
-      <li v-for="task in tasks" :key="task.id" :class="{ 'completed': task.isCompleted }">
-        <input type="checkbox" v-model="task.isCompleted" @change="toggleTask(task)">
-                <span>{{ task.title }}</span>
-        <button @click="deleteTask(task.id)" class="delete-btn">Delete</button>
+      <li v-for="task in sortedTasks" :key="task.id" :class="{ 'completed': task.isCompleted }">
+        <input type="checkbox" v-model="task.isCompleted" @change="toggleTask(task)" :disabled="isTaskFetchFailed">
+        <span>{{ task.title }}</span>
+        <span class="due-date">Due: {{ formatDate(task.dueDate) }}</span>
+        <button @click="deleteTask(task.id)" class="delete-btn" :disabled="isTaskFetchFailed">Delete</button>
       </li>
     </ul>
     <div v-if="errorMessage" class="error-message">
@@ -26,13 +30,19 @@ import { API_BASE } from '../../config';
 
 const tasks = ref([]);
 const newTaskTitle = ref('');
+const newTaskDueDate = ref(new Date().toISOString().slice(0, 10));
 const errorMessage = ref('');
+const isTaskFetchFailed = ref(false);
 
 const fetchTasks = async () => {
+  isTaskFetchFailed.value = false;
   try {
     const response = await axios.get(`${API_BASE}/Task/getalltasks`);
-    tasks.value = response.data;
+    // Sort by due date ascending
+    tasks.value = response.data.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
   } catch (error) {
+    isTaskFetchFailed.value = true;
+    errorMessage.value = 'Failed to get tasks from the server.';
     console.error('Error fetching tasks:', error);
   }
 };
@@ -44,14 +54,29 @@ const addTask = async () => {
   try {
     const response = await axios.post(`${API_BASE}/Task/createtask`, {
       title: newTaskTitle.value,
-      isCompleted: false
+      isCompleted: false,
+      dueDate: newTaskDueDate.value
     });
     tasks.value.push(response.data);
+    // Sort after adding
+    tasks.value.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
     newTaskTitle.value = '';
+    newTaskDueDate.value = new Date().toISOString().slice(0, 10);
   } catch (error) {
     console.error('Error adding task:', error);
   }
 };
+// Computed sorted tasks for rendering
+import { computed } from 'vue';
+const sortedTasks = computed(() => {
+  return [...tasks.value].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+});
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString();
+}
 
 const toggleTask = async (task) => {
   try {
@@ -92,10 +117,16 @@ onMounted(fetchTasks);
 
 .add-task {
   display: flex;
+  align-items: center;
   margin-bottom: 20px;
 }
 
-.add-task input {
+.add-task label,
+.add-task input[type="date"] {
+  margin-right: 10px;
+}
+
+.add-task input[type="text"] {
   flex-grow: 1;
   padding: 10px;
   border: 1px solid #ccc;
@@ -141,6 +172,16 @@ li input[type="checkbox"] {
   color: white;
   border-radius: 4px;
   cursor: pointer;
+}
+.due-date {
+  margin-left: 15px;
+  color: #888;
+  font-size: 0.95em;
+}
+.due-date-label {
+  margin-left: 10px;
+  margin-right: 5px;
+  font-weight: 500;
 }
 
 .error-message {
