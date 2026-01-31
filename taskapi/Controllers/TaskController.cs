@@ -23,7 +23,8 @@ public class TaskController : ControllerBase
         var item = new TodoApi.Models.TaskItem
         {
             Title = dto.Title,
-            IsCompleted = dto.IsCompleted
+            IsCompleted = dto.IsCompleted,
+            DueDate = dto.DueDate ?? DateTime.Today
         };
 
         _context.TodoItems.Add(item);
