@@ -42,4 +42,30 @@ public class TaskController : ControllerBase
         var items = await _context.TodoItems.ToListAsync();
         return Ok(items);
     }
+
+    [HttpPatch("updatetaskstatus/{id}")]
+    public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] UpdateTaskStatusDto dto)
+    {
+        var item = await _context.TodoItems.FindAsync(id);
+        if (item == null)
+            return NotFound();
+
+        item.IsCompleted = dto.IsCompleted;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("deletetask/{id}")]
+    public async Task<IActionResult> DeleteTask(int id)
+    {
+        var item = await _context.TodoItems.FindAsync(id);
+        if (item == null)
+            return NotFound();
+
+        _context.TodoItems.Remove(item);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
