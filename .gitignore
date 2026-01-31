@@ -31,3 +31,4 @@ Thumbs.db
 *.bak
 *.tmp
 taskapi/tasks.db
+taskapi/tasks.db
