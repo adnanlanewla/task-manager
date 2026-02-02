@@ -12,12 +12,16 @@ This project is a simple, pragmatic to-do task management solution with a .NET 8
   - Create, retrieve (by ID and all), update status, and delete tasks.
 - **MVP Features:**  
   - Task creation, status update, deletion, and retrieval.
+  - A `DueDate` property is added to each task, which defaults to the current date upon task creation.
+  - The list of all tasks is sorted by the `DueDate` in ascending order.
   - Clear separation of concerns and RESTful API design.
 
  ## Installation & Setup
 
 ### Backend (.NET 8 API)
 - cd task-manager/taskapi
+- First, ensure you have the .NET EF Core tools installed. If not, run the following command:
+  - dotnet tool install --global dotnet-ef
 - dotnet restore
 - dotnet ef database update
 - dotnet run
@@ -31,7 +35,7 @@ This project is a simple, pragmatic to-do task management solution with a .NET 8
 ### Frontend (Vue.js)
 - cd task-manager/client/task-client
 - npm install
-- npm run dev
+- npm run serve
 
   ## Testing
   - Unit tests use Vitest and Vue Test Utils.
@@ -43,11 +47,9 @@ This project is a simple, pragmatic to-do task management solution with a .NET 8
 ## Assumptions & Trade-offs
 - Used SQLite for persistence; can be swapped for another provider if needed.
 -	This project is intended as a demo and for development/testing purposes only.
--	The SQLite database file (tasks.db) is stored in the project directory for convenience; this is not recommended for production.
 -	In a production environment, the database should be stored in a secure, persistent location outside the application directory, and a more robust DBMS may be preferred for scalability and reliability.
--	The database file should not be checked into source control for production use.
 - No authentication for simplicity; not recommended for production.
-- For local development, the backend and frontend are assumed to run on separate servers (e.g., backend on localhost:7049, frontend on localhost:8080), which is why CORS is enabled for http://localhost:8080.
+- For local development, the backend and frontend are assumed to run on separate servers (e.g., backend on localhost:5144, frontend on localhost:8080), which is why CORS is enabled for http://localhost:8080.
 - In a production environment, the backend would typically run on a dedicated server or cloud service, and the frontend would be served to clients (e.g., via a CDN or web server). CORS should be configured according to the actual deployment setup.
 - This CORS policy is for development/debugging only and should be reviewed before production deployment.
 
@@ -65,3 +67,4 @@ This project is a simple, pragmatic to-do task management solution with a .NET 8
   -	Improve error handling and validation.
   -	Containerize with Docker for easier deployment.
   -	Enhance UI/UX and accessibility.
+  -	Improve database handling by managing the database on a separate server
