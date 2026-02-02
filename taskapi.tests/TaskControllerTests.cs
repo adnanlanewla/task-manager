@@ -33,7 +33,7 @@ public class TaskControllerTests
     {
         var context = GetSqliteDbContext();
         var controller = new TaskController(context);
-        var dueDate = new DateTime(2026, 1, 31);
+        var dueDate = DateTime.Today; 
         var dto = new CreateTaskDto { Title = "Test Task", IsCompleted = false };
 
         var result = await controller.CreateTask(dto);
